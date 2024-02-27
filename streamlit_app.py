@@ -6,19 +6,19 @@ from vega_datasets import data
 
 # Heatmap of US with states colored by Medicare spending score
 
-states = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
+state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
 
-choropleth_map = alt.Chart(alt.InlineData(values=us_states_geojson, format=alt.DataFormat(property='features',type='json'))).mark_geoshape(
-).encode(
-    color='Score:Q',  # Quantitative data for the color scale
-    tooltip=['State:N', 'Score:Q']  # Tooltips for interactivity
-).properties(
-    width=500,
-    height=300,
-    title='Medicare Hospital Spending Score by State'
-)
+states <- alt$topo_feature(us, feature = "states")
 
-st.altair_chart(choropleth_map, use_container_width=True)
+# US states background
+background <-
+  alt$Chart(states)$
+  mark_geoshape(
+    fill = "lightgray",
+    stroke = "white"
+  )$
+  properties(width = 500, height = 300)$
+  project("albersUsa"))
 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
