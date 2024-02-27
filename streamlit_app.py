@@ -8,17 +8,30 @@ from vega_datasets import data
 
 state_spending = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-State.csv')
 
-states <- alt$topo_feature(us, feature = "states")
+us_states = alt.topo_feature(data.us_10m.url, 'states')
 
 # US states background
-background <-
-  alt$Chart(states)$
-  mark_geoshape(
-    fill = "lightgray",
-    stroke = "white"
-  )$
-  properties(width = 500, height = 300)$
-  project("albersUsa"))
+base = alt.Chart(us_states).mark_geoshape(
+    fill='lightgray',
+    stroke='white'
+).properties(
+    width=500,
+    height=300
+).project('albersUsa')
+
+# Overlay with Medicare Spending score
+spending_map = alt.Chart(us_states).mark_geoshape().encode(
+    color='Score:Q'  
+).transform_lookup(
+    lookup='State',
+    from_=alt.LookupData(state_spending, 'State', ['Score']) 
+).project(
+    'albersUsa'
+).properties(
+    width=500,
+    height=300
+)
+
 
 df = pd.read_csv('Medicare_Hospital_Spending_Per_Patient-Hospital.csv')
 
